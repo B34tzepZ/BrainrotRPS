@@ -6,7 +6,8 @@ import java.awt.event.MouseMotionListener;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DisplayArea extends JPanel {
+public class DisplayArea extends JPanel implements Normalizer{
+    private static final int PADDING = 10;
     Shape shape;
     int startingCapacity;
     int maxCapacity;
@@ -33,6 +34,31 @@ public class DisplayArea extends JPanel {
         frame.getContentPane().add(displayArea, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         return frame;
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        final Graphics2D g2D = (Graphics2D) g;
+        g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2D.setColor(Color.darkGray);
+        g2D.fillRect(0,0, this.getWidth(), this.getHeight());
+        g2D.setColor(Color.white);
+        this.shape.drawFunction.draw(g2D, this);
+    }
+
+    @Override
+    public NormalizedPoint normalize(Point point) {
+        double x = ((double) point.x) / this.getWidth();
+        double y = ((double) point.y) / this.getHeight();
+        return new NormalizedPoint(x, y);
+    }
+
+    @Override
+    public Point denormalize(NormalizedPoint normalizedPoint) {
+        int x = (int) (normalizedPoint.x() * this.getWidth());
+        int y = (int) (normalizedPoint.y() * this.getHeight());
+        return new Point(x, y);
     }
 
     class ClickListener implements MouseListener {
