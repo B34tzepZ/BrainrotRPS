@@ -2,9 +2,9 @@ import java.awt.*;
 
 public enum Shape {
     TRIANGLE((graphics2D, displayArea) -> {
-        NormalizedPoint top = new NormalizedPoint(0.5,0.05);
-        NormalizedPoint bottomLeft = new NormalizedPoint(0.05,0.95);
-        NormalizedPoint bottomRight = new NormalizedPoint(0.95,0.95);
+        NormalizedPoint top = new NormalizedPoint(0.5,0);
+        NormalizedPoint bottomLeft = new NormalizedPoint(0,1);
+        NormalizedPoint bottomRight = new NormalizedPoint(1,1);
         Point p1 = displayArea.denormalize(top);
         Point p2 = displayArea.denormalize(bottomLeft);
         Point p3 = displayArea.denormalize(bottomRight);
