@@ -1,3 +1,5 @@
+import org.realityforge.vecmath.Vector2d;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -6,12 +8,14 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class DisplayArea extends JPanel implements Normalizer {
     private static final int PADDING = 10;
     Shape shape;
     private final List<GameListener> listeners = new ArrayList<>();
 
+    public int getPadding() {
+        return PADDING;
+    }
 
     /*
     private static final int POINT_SIZE = 10;
@@ -55,7 +59,6 @@ public class DisplayArea extends JPanel implements Normalizer {
         g2D.fillRect(0, 0, this.getWidth(), this.getHeight());
         g2D.setColor(Color.white);
         this.shape.drawFunction.draw(g2D, this);
-
     }
 
     @Override
@@ -76,6 +79,43 @@ public class DisplayArea extends JPanel implements Normalizer {
         return new Point(x, y);
     }
 
+    public boolean withinShape(Point point) {
+        switch (shape) {
+            case TRIANGLE -> {
+                NormalizedPoint normalizedPoint = normalize(point);
+                if (normalizedPoint.y() < 1) {
+                    if (normalizedPoint.x() < 0.5 + normalizedPoint.y() / 2 && normalizedPoint.x() > 0.5 - normalizedPoint.y() / 2) {
+                        return true;
+                    }
+                }
+            }
+            case SQUARE -> {
+                if (point.x > PADDING && point.y > PADDING) {
+                    if (point.x < getWidth() - PADDING && point.y < getHeight() - PADDING) {
+                        return true;
+                    }
+                }
+            }
+            case CIRCLE -> {
+                NormalizedPoint normalizedPoint = normalize(point);
+                NormalizedPoint shiftedPoint = new NormalizedPoint(normalizedPoint.x() - 0.5, normalizedPoint.y() - 0.5);
+                if (((shiftedPoint.x() * shiftedPoint.x()) / (0.5 * 0.5) + (shiftedPoint.y() * shiftedPoint.y()) / (0.5 * 0.5)) < 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Tool getSelectedTool(Point point) {
+        NormalizedPoint normalizedPoint = normalize(new Point(point.x - PADDING, point.y - PADDING));
+        if (normalizedPoint.x() < 0.5 && (normalizedPoint.x() + normalizedPoint.y()) < 1) {
+            return Tool.ROCK;
+        } else if (normalizedPoint.x() > 0.5 && normalizedPoint.x() > normalizedPoint.y()) {
+            return Tool.SCISSORS;
+        } else return Tool.PAPER;
+    }
+
     class ClickListener implements MouseListener {
         private Point pressPoint;
         private Point releasePoint;
@@ -87,25 +127,40 @@ public class DisplayArea extends JPanel implements Normalizer {
         @Override
         public void mousePressed(MouseEvent e) {
             pressPoint = e.getPoint();
-            NormalizedPoint normalizedPoint = normalize(new Point(pressPoint.x - PADDING, pressPoint.y - PADDING));
-            //TODO: Herausfinden ob innerhalb des Shapes
-            if (normalizedPoint.x() < 0.5 && (normalizedPoint.x() + normalizedPoint.y()) < 1) {
-                listeners.forEach(listener -> listener.onAdded(Tool.ROCK));
+            if (withinShape(pressPoint)) {
+                switch (getSelectedTool(pressPoint)) {
+                    case ROCK -> {
+                        if (listeners.get(0).hasCapacity(Tool.ROCK)) { //TODO: get(0) vermeiden
+                            listeners.forEach(listener -> listener.onAdded(Tool.ROCK));
+                        }
+                    }
+                    case SCISSORS -> {
+                        if (listeners.get(0).hasCapacity(Tool.SCISSORS)) {
+                            listeners.forEach(listener -> listener.onAdded(Tool.SCISSORS));
+                        }
+                    }
+                    case PAPER -> {
+                        if (listeners.get(0).hasCapacity(Tool.PAPER)) {
+                            listeners.forEach(listener -> listener.onAdded(Tool.PAPER));
+                        }
+                    }
+                }
             }
-            else if (normalizedPoint.x() > 0.5 && normalizedPoint.x() > normalizedPoint.y()) {
-                listeners.forEach(listener -> listener.onAdded(Tool.SCISSORS));
-            }
-            else listeners.forEach(listener -> listener.onAdded(Tool.PAPER));
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
             releasePoint = e.getPoint();
-            SwingUtilities.invokeLater(() -> {
-                Graphics g = getGraphics();
-                g.setColor(Color.white);
-                g.drawLine(pressPoint.x, pressPoint.y, releasePoint.x, releasePoint.y);
-            });
+            if (withinShape(pressPoint)) {
+                Vector2d vector2d = new Vector2d(releasePoint.getX() - pressPoint.getX(), releasePoint.getY() - pressPoint.getY());
+                vector2d.normalize();
+                vector2d.mul(10);
+                SwingUtilities.invokeLater(() -> {
+                    Graphics g = getGraphics();
+                    g.setColor(Color.white);
+                    g.drawRect(pressPoint.x, pressPoint.y, Math.abs((int) vector2d.x), Math.abs((int) vector2d.y));
+                });
+            }
         }
 
         @Override
