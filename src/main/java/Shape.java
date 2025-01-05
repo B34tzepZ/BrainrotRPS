@@ -15,18 +15,18 @@ public enum Shape {
         graphics2D.drawPolygon(polygon);
     }),
     SQUARE((graphics2D, displayArea) -> {
-        NormalizedPoint topLeft = new NormalizedPoint(0.05, 0.05);
-        NormalizedPoint bottomRight = new NormalizedPoint(0.9, 0.9);
+        NormalizedPoint topLeft = new NormalizedPoint(0, 0);
+        NormalizedPoint bottomRight = new NormalizedPoint(1, 1);
         Point p1 = displayArea.denormalize(topLeft);
         Point p2 = displayArea.denormalize(bottomRight);
-        graphics2D.drawRect(p1.x, p1.y, p2.x, p2.y);
+        graphics2D.drawRect(p1.x, p1.y, p2.x - displayArea.getPadding(), p2.y - displayArea.getPadding());
     }),
     CIRCLE((graphics2D, displayArea) -> {
-        NormalizedPoint topLeft = new NormalizedPoint(0.05, 0.05);
-        NormalizedPoint bottomRight = new NormalizedPoint(0.9, 0.9);
+        NormalizedPoint topLeft = new NormalizedPoint(0, 0);
+        NormalizedPoint bottomRight = new NormalizedPoint(1, 1);
         Point p1 = displayArea.denormalize(topLeft);
         Point p2 = displayArea.denormalize(bottomRight);
-        graphics2D.drawOval(p1.x, p1.y, p2.x, p2.y);
+        graphics2D.drawOval(p1.x, p1.y, p2.x - displayArea.getPadding(), p2.y - displayArea.getPadding());
     });
 
     public final Drawable drawFunction;
