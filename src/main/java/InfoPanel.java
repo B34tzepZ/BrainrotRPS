@@ -2,7 +2,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class InfoPanel extends JPanel implements GameListener{
+public class InfoPanel extends JPanel implements GameListener {
     private int rockCapacity;
     private int paperCapacity;
     private int scissorsCapacity;
@@ -25,7 +25,7 @@ public class InfoPanel extends JPanel implements GameListener{
         this.add(rock);
         this.add(paper);
         this.add(scissors);
-        this.setBorder(new EmptyBorder(0,10,0,0));
+        this.setBorder(new EmptyBorder(0, 10, 0, 0));
     }
 
     @Override
@@ -37,5 +37,21 @@ public class InfoPanel extends JPanel implements GameListener{
                 case SCISSORS -> scissors.setText(tool.asLabelContent(--scissorsCapacity, maxCapacity));
             }
         });
+    }
+
+    @Override
+    public boolean hasCapacity(Tool tool) {
+        switch (tool) {
+            case ROCK -> {
+                return rockCapacity > 0;
+            }
+            case PAPER -> {
+                return paperCapacity > 0;
+            }
+            case SCISSORS -> {
+                return scissorsCapacity > 0;
+            }
+        }
+        return false;
     }
 }
