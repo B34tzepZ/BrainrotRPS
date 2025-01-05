@@ -28,6 +28,7 @@ public class Menu {
         panel.add(maxCapacityLabel);
 
         final JCheckBox useStartingCapacity = new JCheckBox("Same as Starting Capacity");
+        useStartingCapacity.setSelected(true);
         useStartingCapacity.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(useStartingCapacity);
 
@@ -39,7 +40,7 @@ public class Menu {
         panel.add(button);
 
         button.addActionListener(e -> {
-            int maxCapacity = useStartingCapacity.isSelected() ? (int) startingCapacities.getSelectedItem() : (int) spinner.getValue();
+            int maxCapacity = useStartingCapacity.isSelected() || (int) spinner.getValue() < (int) startingCapacities.getSelectedItem() ? (int) startingCapacities.getSelectedItem() : (int) spinner.getValue();
             JFrame gameWindow = DisplayArea.newWindow((Shape) shape.getSelectedItem(), (int) startingCapacities.getSelectedItem(), maxCapacity);
             SwingUtilities.invokeLater(() -> gameWindow.setVisible(true));
             SwingUtilities.invokeLater(() -> frame.setVisible(false));
