@@ -269,7 +269,7 @@ public class DisplayArea extends JPanel implements Normalizer {
             if (!withinShape(location)) {
                 switch (shape) {
                     case TRIANGLE -> {
-                        if (location.y < getHeight() - PADDING) {
+                        if (location.y < getHeight() - 2 * PADDING) {
                             Vector2d normal = new Vector2d(2, 1);
                             if (location.x > getWidth() / 2) {
                                 normal.set(-2, 1);
@@ -279,6 +279,8 @@ public class DisplayArea extends JPanel implements Normalizer {
                         } else {
                             motion.y *= -1;
                         }
+                        location.x += (int) motion.x;
+                        location.y += (int) motion.y;
                     }
 
                     case SQUARE -> {
@@ -287,11 +289,15 @@ public class DisplayArea extends JPanel implements Normalizer {
                         } else {
                             motion.y *= -1;
                         }
+                        location.x += (int) motion.x;
+                        location.y += (int) motion.y;
                     }
 
                     case CIRCLE -> {
                         Vector2d normal = new Vector2d((double) getWidth() / 2 - location.x, (double) getHeight() / 2 - location.y);
                         motion = calculateReflection(motion, normal);
+                        location.x += (int) motion.x;
+                        location.y += (int) motion.y;
                     }
                 }//*/
             }

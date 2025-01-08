@@ -49,7 +49,7 @@ public class InfoPanel extends JPanel implements GameListener {
             gameSpeed = gameSpeedBox.getSelectedIndex();
         });
 
-        final JLabel refillSpeedLabel = new JLabel("Refill Speed");
+        final JLabel refillSpeedLabel = new JLabel("Refill Amount");
         this.add(refillSpeedLabel);
         final Integer[] refillSpeedOptions = {0, 1, 2, 3};
         final JComboBox<Integer> refillSpeedBox = new JComboBox<>(refillSpeedOptions);
@@ -57,6 +57,15 @@ public class InfoPanel extends JPanel implements GameListener {
         refillSpeedBox.addActionListener(e -> {
             refillSpeed = refillSpeedBox.getSelectedIndex();
         });
+
+        /*final JLabel refillTimeLabel = new JLabel("Refill Time");
+        this.add(refillTimeLabel);
+        final Integer[] refillTimeOptions = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        final JComboBox<Integer> refillTimeBox = new JComboBox<>(refillTimeOptions);
+        this.add(refillTimeBox);
+        refillTimeBox.addActionListener(e -> {
+            refillTime = refillTimeBox.getSelectedIndex() + 1;
+        });//*/
 
         Timer timer = new Timer(10000, e -> {
             rockCapacity += refillSpeed;
@@ -72,12 +81,12 @@ public class InfoPanel extends JPanel implements GameListener {
                 scissorsCapacity = maxCapacity;
             }
             rock.setText(Tool.ROCK.asLabelContent(rockCapacity, maxCapacity));
-            paper.setText(Tool.PAPER.asLabelContent(rockCapacity, maxCapacity));
-            scissors.setText(Tool.SCISSORS.asLabelContent(rockCapacity, maxCapacity));
+            paper.setText(Tool.PAPER.asLabelContent(paperCapacity, maxCapacity));
+            scissors.setText(Tool.SCISSORS.asLabelContent(scissorsCapacity, maxCapacity));
         });
 
         timer.setRepeats(true);
-        timer.start();
+        timer.start();//*/
 
         this.setBackground(Color.gray);
         this.setBorder(new EmptyBorder(0, 10, 0, 0));
